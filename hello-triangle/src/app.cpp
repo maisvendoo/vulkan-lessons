@@ -98,6 +98,25 @@ bool HelloTriangleApplication::checkValidationLayerSupport()
 //------------------------------------------------------------------------------
 //
 //------------------------------------------------------------------------------
+std::vector<const char *> HelloTriangleApplication::getRequiredExtentions()
+{
+    uint32_t glfwExtentionsCount = 0;
+    const char **glfwExtentions;
+    glfwExtentions = glfwGetRequiredInstanceExtensions(&glfwExtentionsCount);
+
+    std::vector<const char *> extentions(glfwExtentions, glfwExtentions + glfwExtentionsCount);
+
+    if (enableValidationLayers)
+    {
+        extentions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+    }
+
+    return extentions;
+}
+
+//------------------------------------------------------------------------------
+//
+//------------------------------------------------------------------------------
 void HelloTriangleApplication::createInstance()
 {
     if (enableValidationLayers && !checkValidationLayerSupport())
@@ -117,14 +136,10 @@ void HelloTriangleApplication::createInstance()
     createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     createInfo.pApplicationInfo = &appInfo;
 
-
-    uint32_t glfwExtensionCount = 0;
-    const char **glfwExtensions;
-
-    glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
-
-    createInfo.enabledExtensionCount = glfwExtensionCount;
-    createInfo.ppEnabledExtensionNames  = glfwExtensions;
+    // Формируем список расширений оконной системы GLFW, запрашиваемый у Vulkan
+    auto glfwExtensions = getRequiredExtentions();
+    createInfo.enabledExtensionCount = static_cast<uint32_t>(glfwExtensions.size());
+    createInfo.ppEnabledExtensionNames  = glfwExtensions.data();
 
     // Добавляем слои валидации, если включена соответствующая опция (только в отладке!)
     if (enableValidationLayers)
@@ -164,9 +179,33 @@ void HelloTriangleApplication::createInstance()
 //------------------------------------------------------------------------------
 //
 //------------------------------------------------------------------------------
+void HelloTriangleApplication::setupDebugMessager()
+{
+    if (!enableValidationLayers)
+        return;
+
+    VkDebugUtilsMessengerCreateInfoEXT createInfo{};
+    createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+
+    createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
+                                 VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+                                 VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+
+    createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+                             VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+                             VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+
+    createInfo.pfnUserCallback = debugCallback;
+    createInfo.pUserData = nullptr;
+}
+
+//------------------------------------------------------------------------------
+//
+//------------------------------------------------------------------------------
 void HelloTriangleApplication::initVulkan()
 {
     createInstance();
+    setupDebugMessager();
 }
 
 //------------------------------------------------------------------------------
@@ -192,3 +231,18 @@ void HelloTriangleApplication::cleanup()
 
     glfwTerminate();
 }
+
+//------------------------------------------------------------------------------
+//
+//------------------------------------------------------------------------------
+VkBool32 HelloTriangleApplication::debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+                                                 VkDebugUtilsMessageTypeFlagsEXT messageType,
+                                                 const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
+                                                 void *pUserData)
+{
+    std::cerr << "Validation layer: " << pCallbackData->pMessage << std::endl;
+
+    return VK_FALSE;
+}
+
+

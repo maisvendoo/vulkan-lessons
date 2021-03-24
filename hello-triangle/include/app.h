@@ -30,18 +30,29 @@ private:
 
     VkInstance  instance;
 
+    VkDebugUtilsMessengerEXT debugMessager;
 
     void initWindow();
 
     bool checkValidationLayerSupport();
 
+    std::vector<const char *> getRequiredExtentions();
+
     void createInstance();
+
+    void setupDebugMessager();
 
     void initVulkan();
 
     void mainLoop();
 
     void cleanup();
+
+    static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
+        VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+        VkDebugUtilsMessageTypeFlagsEXT messageType,
+        const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+        void* pUserData);
 };
 
 #endif // APP_H
