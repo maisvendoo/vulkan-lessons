@@ -3,6 +3,16 @@
 const   uint32_t    WIDTH = 1024;
 const   uint32_t    HEIGHT = 768;
 
+const   std::vector<const char *> validationLayers = {
+    "VK_LAYER_KHRONOS_validation"
+};
+
+#ifdef  NDEBUG
+    const bool enableValidationLayers = false;
+#else
+    const bool enableValidationLayers = true;
+#endif
+
 //------------------------------------------------------------------------------
 //
 //------------------------------------------------------------------------------
@@ -55,8 +65,46 @@ void HelloTriangleApplication::initWindow()
 //------------------------------------------------------------------------------
 //
 //------------------------------------------------------------------------------
+bool HelloTriangleApplication::checkValidationLayerSupport()
+{
+    uint32_t layerCount = 0;
+    vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+
+    std::vector<VkLayerProperties> availableLayers(layerCount);
+    vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+
+    for (const char *layerName : validationLayers)
+    {
+        bool layerFound = false;
+
+        for (const auto &layerProperties : availableLayers)
+        {
+            if (strcmp(layerName, layerProperties.layerName) == 0)
+            {
+                layerFound = true;
+                break;
+            }
+        }
+
+        if (!layerFound)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+//------------------------------------------------------------------------------
+//
+//------------------------------------------------------------------------------
 void HelloTriangleApplication::createInstance()
 {
+    if (enableValidationLayers && !checkValidationLayerSupport())
+    {
+        throw std::runtime_error("Validation layers requested, but not available!");
+    }
+
     VkApplicationInfo appInfo{};
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     appInfo.pApplicationName = "Hello Triangle";
@@ -82,12 +130,15 @@ void HelloTriangleApplication::createInstance()
 
     // Получаем список поддерживаемых расширений Vulkan
     uint32_t extensionCount = 0;
+
+    // Предварительный запрос списка расширений Vulkan
     vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
 
+    // Получаем список доступных расширений
     std::vector<VkExtensionProperties> extensions(extensionCount);
-
     vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
 
+    // Выводим в консоль список расширений
     std::cout << "Available extensions:" << std::endl;
 
     for (const auto &extension : extensions)
@@ -126,6 +177,8 @@ void HelloTriangleApplication::mainLoop()
 //------------------------------------------------------------------------------
 void HelloTriangleApplication::cleanup()
 {
+    vkDestroyInstance(instance, nullptr);
+
     glfwDestroyWindow(window);
 
     glfwTerminate();

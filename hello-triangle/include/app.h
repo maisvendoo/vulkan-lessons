@@ -8,6 +8,7 @@
 #include    <stdexcept>
 #include    <cstdlib>
 #include    <vector>
+#include    <cstring>
 
 //------------------------------------------------------------------------------
 //
@@ -31,6 +32,8 @@ private:
 
 
     void initWindow();
+
+    bool checkValidationLayerSupport();
 
     void createInstance();
 
