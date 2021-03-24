@@ -126,7 +126,16 @@ void HelloTriangleApplication::createInstance()
     createInfo.enabledExtensionCount = glfwExtensionCount;
     createInfo.ppEnabledExtensionNames  = glfwExtensions;
 
-    createInfo.enabledLayerCount = 0;
+    // Добавляем слои валидации, если включена соответствующая опция (только в отладке!)
+    if (enableValidationLayers)
+    {
+        createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+        createInfo.ppEnabledLayerNames = validationLayers.data();
+    }
+    else
+    {
+        createInfo.enabledLayerCount = 0;
+    }
 
     // Получаем список поддерживаемых расширений Vulkan
     uint32_t extensionCount = 0;
