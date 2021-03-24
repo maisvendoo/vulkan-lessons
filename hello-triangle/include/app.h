@@ -23,9 +23,15 @@ public:
 
 private:
 
+    // Указатель на экземпляр окна
     GLFWwindow  *window;
 
+    VkInstance  instance;
+
+
     void initWindow();
+
+    void createInstance();
 
     void initVulkan();
 
