@@ -80,6 +80,21 @@ void HelloTriangleApplication::createInstance()
 
     createInfo.enabledLayerCount = 0;
 
+    // Получаем список поддерживаемых расширений Vulkan
+    uint32_t extensionCount = 0;
+    vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
+
+    std::vector<VkExtensionProperties> extensions(extensionCount);
+
+    vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
+
+    std::cout << "Available extensions:" << std::endl;
+
+    for (const auto &extension : extensions)
+    {
+        std::cout << '\t' << extension.extensionName << std::endl;
+    }
+
     if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS)
     {
         throw std::runtime_error("Failed to create instance!");
