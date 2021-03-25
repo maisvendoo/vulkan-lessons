@@ -42,6 +42,8 @@ private:
 
     VkQueue graphicsQueue;
 
+    VkSurfaceKHR    surface;
+
     void initWindow();
 
     bool checkValidationLayerSupport();
@@ -53,6 +55,8 @@ private:
     void populateDebugMessegerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT &createInfo);
 
     void setupDebugMessager();
+
+    void createSurface();
 
     // Выбор физического устройства вывода (видеокарты)
     void pickPhysicalDevice();
