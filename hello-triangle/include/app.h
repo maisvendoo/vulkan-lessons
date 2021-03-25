@@ -10,6 +10,8 @@
 #include    <vector>
 #include    <cstring>
 
+#include    "queue-family-indices.h"
+
 //------------------------------------------------------------------------------
 //
 //------------------------------------------------------------------------------
@@ -51,6 +53,9 @@ private:
 
     // Проверка физического устройства на соответствие нашим требованиям
     bool isDeviceSuitable(VkPhysicalDevice device);
+
+    // Определение доступных семейств очередей Vulkan
+    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
     void initVulkan();
 
