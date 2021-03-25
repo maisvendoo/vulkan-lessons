@@ -40,6 +40,8 @@ private:
 
     void createInstance();
 
+    void populateDebugMessegerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT &createInfo);
+
     void setupDebugMessager();
 
     void initVulkan();

@@ -16,6 +16,41 @@ const   std::vector<const char *> validationLayers = {
 //------------------------------------------------------------------------------
 //
 //------------------------------------------------------------------------------
+VkResult CreateDebugUtilsMessagesEXT(VkInstance instance,
+                                     const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo,
+                                     const VkAllocationCallbacks *pAllocator,
+                                     VkDebugUtilsMessengerEXT *pDebugMessager)
+{
+    auto func = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT"));
+
+    if (func != nullptr)
+    {
+        return func(instance, pCreateInfo, pAllocator, pDebugMessager);
+    }
+    else
+    {
+        return VK_ERROR_EXTENSION_NOT_PRESENT;
+    }
+}
+
+//------------------------------------------------------------------------------
+//
+//------------------------------------------------------------------------------
+void DestroyDebugUtilsMessegerEXT(VkInstance instance,
+                                  VkDebugUtilsMessengerEXT debugMesseger,
+                                  const VkAllocationCallbacks *pAllocator)
+{
+    auto func = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT"));
+
+    if (func != nullptr)
+    {
+        func(instance, debugMesseger, pAllocator);
+    }
+}
+
+//------------------------------------------------------------------------------
+//
+//------------------------------------------------------------------------------
 HelloTriangleApplication::HelloTriangleApplication()
     : window(nullptr)
 {
@@ -142,14 +177,20 @@ void HelloTriangleApplication::createInstance()
     createInfo.ppEnabledExtensionNames  = glfwExtensions.data();
 
     // Добавляем слои валидации, если включена соответствующая опция (только в отладке!)
+    VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo;
+
     if (enableValidationLayers)
     {
         createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
         createInfo.ppEnabledLayerNames = validationLayers.data();
+
+        populateDebugMessegerCreateInfo(debugCreateInfo);
+        createInfo.pNext = static_cast<VkDebugUtilsMessengerCreateInfoEXT *>(&debugCreateInfo);
     }
     else
     {
         createInfo.enabledLayerCount = 0;
+        createInfo.pNext = nullptr;
     }
 
     // Получаем список поддерживаемых расширений Vulkan
@@ -179,12 +220,8 @@ void HelloTriangleApplication::createInstance()
 //------------------------------------------------------------------------------
 //
 //------------------------------------------------------------------------------
-void HelloTriangleApplication::setupDebugMessager()
+void HelloTriangleApplication::populateDebugMessegerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT &createInfo)
 {
-    if (!enableValidationLayers)
-        return;
-
-    VkDebugUtilsMessengerCreateInfoEXT createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
 
     createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
@@ -197,6 +234,23 @@ void HelloTriangleApplication::setupDebugMessager()
 
     createInfo.pfnUserCallback = debugCallback;
     createInfo.pUserData = nullptr;
+}
+
+//------------------------------------------------------------------------------
+//
+//------------------------------------------------------------------------------
+void HelloTriangleApplication::setupDebugMessager()
+{
+    if (!enableValidationLayers)
+        return;
+
+    VkDebugUtilsMessengerCreateInfoEXT createInfo{};
+    populateDebugMessegerCreateInfo(createInfo);
+
+    if (CreateDebugUtilsMessagesEXT(instance, &createInfo, nullptr, &debugMessager) != VK_SUCCESS)
+    {
+        throw std::runtime_error("Failed to set up debug messeger");
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -225,6 +279,11 @@ void HelloTriangleApplication::mainLoop()
 //------------------------------------------------------------------------------
 void HelloTriangleApplication::cleanup()
 {
+    if (enableValidationLayers)
+    {
+        DestroyDebugUtilsMessegerEXT(instance, debugMessager, nullptr);
+    }
+
     vkDestroyInstance(instance, nullptr);
 
     glfwDestroyWindow(window);
