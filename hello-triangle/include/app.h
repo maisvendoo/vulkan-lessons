@@ -32,6 +32,8 @@ private:
 
     VkDebugUtilsMessengerEXT debugMessager;
 
+    VkPhysicalDevice    physicalDevice;
+
     void initWindow();
 
     bool checkValidationLayerSupport();
@@ -43,6 +45,12 @@ private:
     void populateDebugMessegerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT &createInfo);
 
     void setupDebugMessager();
+
+    // Выбор физического устройства вывода (видеокарты)
+    void pickPhysicalDevice();
+
+    // Проверка физического устройства на соответствие нашим требованиям
+    bool isDeviceSuitable(VkPhysicalDevice device);
 
     void initVulkan();
 
