@@ -36,6 +36,12 @@ private:
 
     VkPhysicalDevice    physicalDevice;
 
+    VkDevice            device;
+
+    VkPhysicalDeviceFeatures deviceFeatures;
+
+    VkQueue graphicsQueue;
+
     void initWindow();
 
     bool checkValidationLayerSupport();
@@ -56,6 +62,9 @@ private:
 
     // Определение доступных семейств очередей Vulkan
     QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
+
+    // Создание логического устройства
+    void createLogicalDevice();
 
     void initVulkan();
 

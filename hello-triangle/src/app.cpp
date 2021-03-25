@@ -330,11 +330,55 @@ QueueFamilyIndices HelloTriangleApplication::findQueueFamilies(VkPhysicalDevice 
 //------------------------------------------------------------------------------
 //
 //------------------------------------------------------------------------------
+void HelloTriangleApplication::createLogicalDevice()
+{
+    QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
+
+    VkDeviceQueueCreateInfo queueCreateInfo{};
+    queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+    queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
+    queueCreateInfo.queueCount = 1;
+
+    float queuePriority = 1.0f;
+    queueCreateInfo.pQueuePriorities = &queuePriority;
+
+    VkDeviceCreateInfo deviceCreateInfo{};
+    deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    deviceCreateInfo.pQueueCreateInfos = &queueCreateInfo;
+    deviceCreateInfo.queueCreateInfoCount = 1;
+
+    vkGetPhysicalDeviceFeatures(physicalDevice, &deviceFeatures);
+    deviceCreateInfo.pEnabledFeatures = &deviceFeatures;
+
+    deviceCreateInfo.enabledExtensionCount = 0;
+
+    if (enableValidationLayers)
+    {
+        deviceCreateInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+        deviceCreateInfo.ppEnabledLayerNames = validationLayers.data();
+    }
+    else
+    {
+        deviceCreateInfo.enabledLayerCount = 0;
+    }
+
+    if (vkCreateDevice(physicalDevice, &deviceCreateInfo, nullptr, &device) != VK_SUCCESS)
+    {
+        throw std::runtime_error("Failed to create logical device!");
+    }
+
+    vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
+}
+
+//------------------------------------------------------------------------------
+//
+//------------------------------------------------------------------------------
 void HelloTriangleApplication::initVulkan()
 {
     createInstance();
     setupDebugMessager();
     pickPhysicalDevice();
+    createLogicalDevice();
 }
 
 //------------------------------------------------------------------------------
@@ -354,6 +398,8 @@ void HelloTriangleApplication::mainLoop()
 //------------------------------------------------------------------------------
 void HelloTriangleApplication::cleanup()
 {
+    vkDestroyDevice(device, nullptr);
+
     if (enableValidationLayers)
     {
         DestroyDebugUtilsMessegerEXT(instance, debugMessager, nullptr);
