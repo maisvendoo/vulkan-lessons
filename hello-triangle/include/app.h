@@ -66,6 +66,8 @@ private:
 
     VkPipeline graphicsPipeline;
 
+    std::vector<VkFramebuffer> swapChainFramebuffers;
+
     void initWindow();
 
     bool checkValidationLayerSupport();
@@ -110,6 +112,8 @@ private:
     void createRenderPass();
 
     void createGraphicsPipeline();
+
+    void createFramebuffers();
 
     void initVulkan();
 
