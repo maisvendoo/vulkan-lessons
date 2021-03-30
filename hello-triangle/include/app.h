@@ -10,6 +10,7 @@
 #include    <vector>
 #include    <cstring>
 #include    <set>
+#include    <algorithm>
 
 #include    "queue-family-indices.h"
 #include    "swap-chain-support.h"
@@ -72,11 +73,20 @@ private:
 
     SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
 
+    VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats);
+
+    VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes);
+
+    VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities);
+
     // Определение доступных семейств очередей Vulkan
     QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
     // Создание логического устройства
     void createLogicalDevice();
+
+    // Создание swap chain
+    void createSwapChain();
 
     void initVulkan();
 
