@@ -60,6 +60,8 @@ private:
 
     std::vector<VkImageView> swapChainImageViews;
 
+    VkPipelineLayout pipelineLayout;
+
     void initWindow();
 
     bool checkValidationLayerSupport();
@@ -101,6 +103,7 @@ private:
 
     void createImageViews();
 
+    void createRenderPass();
 
     void createGraphicsPipeline();
 
@@ -119,7 +122,7 @@ private:
 
     static std::vector<char> readFile(const std::string &filename);
 
-    void createShaderModule(const std::vector<char> &code);
+    VkShaderModule createShaderModule(const std::vector<char> &code);
 };
 
 #endif // APP_H
