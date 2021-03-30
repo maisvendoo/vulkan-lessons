@@ -11,6 +11,7 @@
 #include    <cstring>
 #include    <set>
 #include    <algorithm>
+#include    <fstream>
 
 #include    "queue-family-indices.h"
 #include    "swap-chain-support.h"
@@ -100,6 +101,8 @@ private:
 
     void createImageViews();
 
+    void createGraphicsPipeline();
+
     void initVulkan();
 
     void mainLoop();
@@ -112,6 +115,8 @@ private:
             const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
             void* pUserData
             );
+
+    static std::vector<char> readFile(const std::string &filename);
 };
 
 #endif // APP_H

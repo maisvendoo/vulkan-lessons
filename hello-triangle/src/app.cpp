@@ -622,6 +622,14 @@ void HelloTriangleApplication::createImageViews()
 //------------------------------------------------------------------------------
 //
 //------------------------------------------------------------------------------
+void HelloTriangleApplication::createGraphicsPipeline()
+{
+
+}
+
+//------------------------------------------------------------------------------
+//
+//------------------------------------------------------------------------------
 void HelloTriangleApplication::initVulkan()
 {
     createInstance();
@@ -637,6 +645,8 @@ void HelloTriangleApplication::initVulkan()
     createSwapChain();
 
     createImageViews();
+
+    createGraphicsPipeline();
 }
 
 //------------------------------------------------------------------------------
