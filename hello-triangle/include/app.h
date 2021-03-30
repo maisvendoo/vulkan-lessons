@@ -49,6 +49,16 @@ private:
 
     VkQueue presentQueue;
 
+    VkSwapchainKHR swapChain;
+
+    std::vector<VkImage> swapChainImages;
+
+    VkFormat swapChainImageFormat;
+
+    VkExtent2D swapChainExtent;
+
+    std::vector<VkImageView> swapChainImageViews;
+
     void initWindow();
 
     bool checkValidationLayerSupport();
@@ -87,6 +97,8 @@ private:
 
     // Создание swap chain
     void createSwapChain();
+
+    void createImageViews();
 
     void initVulkan();
 
