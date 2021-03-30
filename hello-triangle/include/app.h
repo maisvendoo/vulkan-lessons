@@ -9,8 +9,10 @@
 #include    <cstdlib>
 #include    <vector>
 #include    <cstring>
+#include    <set>
 
 #include    "queue-family-indices.h"
+#include    "swap-chain-support.h"
 
 //------------------------------------------------------------------------------
 //
@@ -44,6 +46,8 @@ private:
 
     VkSurfaceKHR    surface;
 
+    VkQueue presentQueue;
+
     void initWindow();
 
     bool checkValidationLayerSupport();
@@ -63,6 +67,10 @@ private:
 
     // Проверка физического устройства на соответствие нашим требованиям
     bool isDeviceSuitable(VkPhysicalDevice device);
+
+    bool checkDeviceExtensionSupport(VkPhysicalDevice device);
+
+    SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
 
     // Определение доступных семейств очередей Vulkan
     QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
