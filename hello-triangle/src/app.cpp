@@ -831,6 +831,14 @@ void HelloTriangleApplication::createFramebuffers()
 //------------------------------------------------------------------------------
 //
 //------------------------------------------------------------------------------
+void HelloTriangleApplication::createCommandPool()
+{
+
+}
+
+//------------------------------------------------------------------------------
+//
+//------------------------------------------------------------------------------
 void HelloTriangleApplication::initVulkan()
 {
     createInstance();
@@ -852,6 +860,8 @@ void HelloTriangleApplication::initVulkan()
     createGraphicsPipeline();
 
     createFramebuffers();
+
+    createCommandPool();
 }
 
 //------------------------------------------------------------------------------
