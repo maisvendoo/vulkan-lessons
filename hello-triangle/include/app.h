@@ -101,6 +101,7 @@ private:
 
     void createImageViews();
 
+
     void createGraphicsPipeline();
 
     void initVulkan();
@@ -117,6 +118,8 @@ private:
             );
 
     static std::vector<char> readFile(const std::string &filename);
+
+    void createShaderModule(const std::vector<char> &code);
 };
 
 #endif // APP_H
