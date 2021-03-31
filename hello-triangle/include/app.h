@@ -70,6 +70,8 @@ private:
 
     VkCommandPool commandPool;
 
+    std::vector<VkCommandBuffer> commandBuffers;
+
     void initWindow();
 
     bool checkValidationLayerSupport();
@@ -118,6 +120,8 @@ private:
     void createFramebuffers();
 
     void createCommandPool();
+
+    void createCommandBuffers();
 
     void initVulkan();
 
