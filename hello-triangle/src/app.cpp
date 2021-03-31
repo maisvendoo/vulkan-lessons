@@ -905,6 +905,21 @@ void HelloTriangleApplication::createCommandBuffers()
 //------------------------------------------------------------------------------
 //
 //------------------------------------------------------------------------------
+void HelloTriangleApplication::createSemaphores()
+{
+    VkSemaphoreCreateInfo semaphoreInfo{};
+    semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+    if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &imageAvailableSemaphore) != VK_SUCCESS ||
+        vkCreateSemaphore(device, &semaphoreInfo, nullptr, &renderFinishedSemaphore) != VK_SUCCESS)
+    {
+        throw std::runtime_error("Failed to create semaphores!");
+    }
+}
+
+//------------------------------------------------------------------------------
+//
+//------------------------------------------------------------------------------
 void HelloTriangleApplication::initVulkan()
 {
     createInstance();
@@ -930,6 +945,17 @@ void HelloTriangleApplication::initVulkan()
     createCommandPool();
 
     createCommandBuffers();
+
+    createSemaphores();
+}
+
+//------------------------------------------------------------------------------
+//
+//------------------------------------------------------------------------------
+void HelloTriangleApplication::drawFrame()
+{
+    uint32_t imageIndex;
+    vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
 }
 
 //------------------------------------------------------------------------------
@@ -941,6 +967,7 @@ void HelloTriangleApplication::mainLoop()
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
+        drawFrame();
     }
 }
 
@@ -949,6 +976,9 @@ void HelloTriangleApplication::mainLoop()
 //------------------------------------------------------------------------------
 void HelloTriangleApplication::cleanup()
 {
+    vkDestroySemaphore(device, renderFinishedSemaphore, nullptr);
+    vkDestroySemaphore(device, imageAvailableSemaphore, nullptr);
+
     vkDestroyCommandPool(device, commandPool, nullptr);
 
     for (auto framebuffer : swapChainFramebuffers)

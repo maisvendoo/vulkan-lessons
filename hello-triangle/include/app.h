@@ -72,6 +72,10 @@ private:
 
     std::vector<VkCommandBuffer> commandBuffers;
 
+    VkSemaphore imageAvailableSemaphore;
+
+    VkSemaphore renderFinishedSemaphore;
+
     void initWindow();
 
     bool checkValidationLayerSupport();
@@ -123,7 +127,11 @@ private:
 
     void createCommandBuffers();
 
+    void createSemaphores();
+
     void initVulkan();
+
+    void drawFrame();
 
     void mainLoop();
 
