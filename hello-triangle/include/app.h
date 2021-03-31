@@ -40,6 +40,8 @@ private:
 
     VkPhysicalDevice    physicalDevice;
 
+    size_t currentFrame;
+
     VkDevice            device;
 
     VkPhysicalDeviceFeatures deviceFeatures;
@@ -72,9 +74,13 @@ private:
 
     std::vector<VkCommandBuffer> commandBuffers;
 
-    VkSemaphore imageAvailableSemaphore;
+    std::vector<VkSemaphore> imageAvailableSemaphore;
 
-    VkSemaphore renderFinishedSemaphore;
+    std::vector<VkSemaphore> renderFinishedSemaphore;
+
+    std::vector<VkFence> inFlightFences;
+
+    std::vector<VkFence> imagesInFlight;
 
     void initWindow();
 
@@ -127,7 +133,7 @@ private:
 
     void createCommandBuffers();
 
-    void createSemaphores();
+    void createSyncObjects();
 
     void initVulkan();
 
